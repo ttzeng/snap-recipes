@@ -1,0 +1,54 @@
+name: ocf-util
+version: 1.1.1-3
+summary: Utilities for testing OCF devices
+description:
+  This snap installs iotivity-node and iot-rest-api-server node modules
+  for testing OCF implementations using Javascript.
+confinement: strict
+grade: devel
+
+apps:
+  start-iot-rest-api-server:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node/deps/iotivity/lib:$LD_LIBRARY_PATH \
+      NODE_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules \
+      node $SNAP/lib/node_modules/iot-rest-api-server/index.js
+    daemon: simple
+    plugs: [ network-bind ]
+
+  node:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node/deps/iotivity/lib:$LD_LIBRARY_PATH \
+      NODE_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules \
+      node
+    plugs: [ home, network-bind ]
+
+parts:
+  # Part builds from local source
+  local:
+    plugin: nil
+    source: .
+
+  # Part installs iotivity, iotivity-node, iot-rest-api-server
+  meta-iot-web:
+    plugin: nodejs
+    node-packages:
+      # HEAD: Merge pull request #39 from nagineni/updates
+      - 01org/iot-rest-api-server#a1ea26d111
+      # HEAD: All: Prepare 1.1.1-3
+      - otcshare/iotivity-node#6cb68eeaaf
+    filesets:
+      exports:
+        # ignore the following files during staging
+        - -CHANGELOG.md
+        - -LICENSE
+        - -README.md
+    organize:
+      # replace the iotivity-node with the specified snapshot
+      lib/node_modules/iotivity-node: lib/node_modules/iot-rest-api-server/node_modules/iotivity-node
+    install:
+      # drop the iotivity-node associated with the iot-rest-api-server before staging
+      rm -rf $SNAPCRAFT_PART_INSTALL/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node
+    stage: [ $exports ]
+    snap:  [ $exports ]
+
