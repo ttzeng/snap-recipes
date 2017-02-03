@@ -1,5 +1,5 @@
 name: ocf-util
-version: 1.1.1-3+
+version: 1.2.0-2
 summary: Utilities for testing OCF devices
 description:
   This snap installs iotivity-node and iot-rest-api-server node modules
@@ -10,7 +10,7 @@ grade: devel
 apps:
   start-iot-rest-api-server:
     command: env \
-      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node/deps/iotivity/lib:$LD_LIBRARY_PATH \
+      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node/iotivity-installed/lib:$LD_LIBRARY_PATH \
       NODE_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules \
       node $SNAP/lib/node_modules/iot-rest-api-server/index.js
     daemon: simple
@@ -18,7 +18,7 @@ apps:
 
   node:
     command: env \
-      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node/deps/iotivity/lib:$LD_LIBRARY_PATH \
+      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node/iotivity-installed/lib:$LD_LIBRARY_PATH \
       NODE_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules \
       node
     plugs: [ home, network-bind ]
@@ -33,10 +33,10 @@ parts:
   meta-iot-web:
     plugin: nodejs
     node-packages:
-      # HEAD: All: Use POST for update
-      - 01org/iot-rest-api-server#77c8249877
-      # HEAD: Tests: Remove API tests and use OS-agnostic termination for the rest
-      - otcshare/iotivity-node#53249fcd62
+      # HEAD: package.json: Update iotivity-node dependency to v1.2.0-2 (#51)
+      - 01org/iot-rest-api-server#bda49e5b62
+      # HEAD: Build: Prepare 1.2.0-2
+      - otcshare/iotivity-node#13cdbaa48c
     filesets:
       exports:
         # ignore the following files during staging
