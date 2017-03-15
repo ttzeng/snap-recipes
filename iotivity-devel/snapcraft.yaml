@@ -1,0 +1,54 @@
+name: iotivity-devel
+version: 1.2.1
+summary: IoTivity development package
+description:
+  This snap provides supports for developing IoTivity native apps
+confinement: strict
+grade: devel
+
+apps:
+  simpleserver:
+    command: bin/simpleserver
+    plugs: [ network-bind ]
+
+  simpleclient:
+    command: bin/simpleclient
+    plugs: [ network, network-bind ]
+
+parts:
+  # Part builds from local source
+  examples:
+    plugin: cmake
+    source: src
+    after: [ iotivity ]
+
+  # Part installs IoTivity
+  iotivity:
+    plugin: scons
+    scons-options:
+      - SECURED=0  # Build with DTLS (0|1)
+      - octbstack
+    source: https://gerrit.iotivity.org/gerrit/p/iotivity.git
+    source-tag: 1.2.1
+    prepare:
+      # pull the tinycbor code before building IoTivity
+      git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.4
+    install:
+      # stage IoTivity header files, built libraries, and example code
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/;
+      cp -r out/*/*/release/include $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/;
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib/;
+      install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib out/*/*/release/*.so;
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples/;
+      install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples resource/examples/*;
+    build-packages:
+      # build prerequisties listed at
+      # https://wiki.iotivity.org/build_iotivity_with_ubuntu_build_machine
+      - libboost-dev
+      - libboost-program-options-dev
+      - libboost-thread-dev
+      - uuid-dev
+      - libexpat1-dev
+      - libglib2.0-dev
+      - libsqlite3-dev
+
