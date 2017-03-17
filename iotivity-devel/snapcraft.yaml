@@ -8,18 +8,22 @@ grade: devel
 
 apps:
   simpleserver:
-    command: bin/simpleserver
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleserver
     plugs: [ network-bind ]
 
   simpleclient:
-    command: bin/simpleclient
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleclient
     plugs: [ network, network-bind ]
 
 parts:
   # Part builds from local source
   examples:
-    plugin: cmake
-    source: src
+    plugin: scons
+    source: examples
     after: [ iotivity ]
 
   # Part installs IoTivity
@@ -33,14 +37,17 @@ parts:
     prepare:
       # pull the tinycbor code before building IoTivity
       git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.4
-    install:
-      # stage IoTivity header files, built libraries, and example code
-      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/;
-      cp -r out/*/*/release/include $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/;
-      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib/;
-      install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib out/*/*/release/*.so;
-      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples/;
-      install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples resource/examples/*;
+    install: |
+      # stage IoTivity header files
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity
+      cp -r out/*/*/release/include $SNAPCRAFT_PART_INSTALL/usr/local/iotivity
+      # stage IoTivity libraries
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib
+      install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib out/*/*/release/*.a
+      install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib out/*/*/release/*.so
+      # stage example code
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples/
+      install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples resource/examples/*
     build-packages:
       # build prerequisties listed at
       # https://wiki.iotivity.org/build_iotivity_with_ubuntu_build_machine

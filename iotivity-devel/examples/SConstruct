@@ -1,0 +1,42 @@
+import os
+
+# define project paths
+SNAPCRAFT_STAGE        = os.environ.get('SNAPCRAFT_STAGE')
+SNAPCRAFT_PART_INSTALL = os.environ.get('SNAPCRAFT_PART_INSTALL')
+
+IOTIVITY          = os.path.join(SNAPCRAFT_STAGE, 'usr', 'local', 'iotivity')
+IOTIVITY_INC      = os.path.join(IOTIVITY, 'include')
+IOTIVITY_LIB      = os.path.join(IOTIVITY, 'lib')
+IOTIVITY_EXAMPLES = os.path.join(IOTIVITY, 'examples')
+
+INSTALL_EXE_DIR   = os.path.join(SNAPCRAFT_PART_INSTALL, 'bin')
+
+# obtain the information about the system such as the C compiler flags, linker flags, etc.
+env = Environment()
+
+# output build artifacts to local directory
+env.VariantDir(os.getcwd(), IOTIVITY_EXAMPLES, duplicate = 0)
+
+env.AppendUnique(CXXFLAGS = ['-std=c++0x', '-Wall'])
+
+env.AppendUnique(CPPPATH = [
+	os.path.join(IOTIVITY_INC, 'c_common'),
+	os.path.join(IOTIVITY_INC, 'resource')
+])
+env.AppendUnique(LIBPATH = [IOTIVITY_LIB])
+env.AppendUnique(RPATH   = '')
+env.AppendUnique(LIBS    = [
+	'coap', 'connectivity_abstraction', 'oc_logger', 'octbstack', 'oc'
+])
+env.AppendUnique(LIBS    = ['pthread'])
+
+def make_cpp_program(name):
+	# build and install the C++ program
+	executable = env.Program(name, name + '.cpp')
+	env.Install(INSTALL_EXE_DIR, executable)
+
+targets = [ 'simpleserver', 'simpleclient' ]
+
+map(make_cpp_program, targets)
+env.Alias('install', INSTALL_EXE_DIR)
+
