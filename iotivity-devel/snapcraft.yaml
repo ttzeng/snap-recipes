@@ -40,7 +40,9 @@ parts:
     install: |
       # stage IoTivity header files
       install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity
-      cp -r out/*/*/release/include $SNAPCRAFT_PART_INSTALL/usr/local/iotivity
+      cd resource
+      rsync -am --include='*.h' --include='*.hpp' -f 'hide,! */' . $SNAPCRAFT_PART_INSTALL/usr/local/iotivity
+      cd -
       # stage IoTivity libraries
       install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib
       install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/lib out/*/*/release/*.a

@@ -5,7 +5,6 @@ SNAPCRAFT_STAGE        = os.environ.get('SNAPCRAFT_STAGE')
 SNAPCRAFT_PART_INSTALL = os.environ.get('SNAPCRAFT_PART_INSTALL')
 
 IOTIVITY          = os.path.join(SNAPCRAFT_STAGE, 'usr', 'local', 'iotivity')
-IOTIVITY_INC      = os.path.join(IOTIVITY, 'include')
 IOTIVITY_LIB      = os.path.join(IOTIVITY, 'lib')
 IOTIVITY_EXAMPLES = os.path.join(IOTIVITY, 'examples')
 
@@ -20,8 +19,10 @@ env.VariantDir(os.getcwd(), IOTIVITY_EXAMPLES, duplicate = 0)
 env.AppendUnique(CXXFLAGS = ['-std=c++0x', '-Wall'])
 
 env.AppendUnique(CPPPATH = [
-	os.path.join(IOTIVITY_INC, 'c_common'),
-	os.path.join(IOTIVITY_INC, 'resource')
+	os.path.join(IOTIVITY, 'include'),
+	os.path.join(IOTIVITY, 'c_common'),
+	os.path.join(IOTIVITY, 'csdk', 'stack', 'include'),
+	os.path.join(IOTIVITY, 'oc_logger', 'include')
 ])
 env.AppendUnique(LIBPATH = [IOTIVITY_LIB])
 env.AppendUnique(RPATH   = '')
