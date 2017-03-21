@@ -1,0 +1,69 @@
+import os
+
+# define project paths
+SNAPCRAFT_PART_INSTALL = os.environ.get('SNAPCRAFT_PART_INSTALL')
+INSTALL_EXE_DIR        = os.path.join(SNAPCRAFT_PART_INSTALL, 'bin')
+
+IOTIVITY          = '/snap/iotivity-devel/current/usr/local/iotivity'
+IOTIVITY_LIB      = os.path.join(IOTIVITY, 'lib')
+IOTIVITY_EXAMPLES = os.path.join(IOTIVITY, 'examples')
+
+# get construction environment
+env = Environment()
+
+if not os.path.exists(IOTIVITY):
+    print 'Error: Snap \'iotivity-devel\' not installed'
+    exit(1)
+
+# output build artifacts to local directory
+env.VariantDir(os.getcwd(), IOTIVITY_EXAMPLES, duplicate = 0)
+
+env.AppendUnique(CXXFLAGS = ['-std=c++0x', '-Wall'])
+
+env.AppendUnique(CPPPATH = [
+    os.path.join(IOTIVITY, 'include'),
+    os.path.join(IOTIVITY, 'c_common'),
+    os.path.join(IOTIVITY, 'c_common', 'oic_malloc', 'include'),
+    os.path.join(IOTIVITY, 'c_common', 'oic_string', 'include'),
+    os.path.join(IOTIVITY, 'csdk', 'stack', 'include'),
+    os.path.join(IOTIVITY, 'csdk', 'logger', 'include'),
+    os.path.join(IOTIVITY, 'oc_logger', 'include')
+])
+env.AppendUnique(LIBPATH = [IOTIVITY_LIB])
+env.AppendUnique(RPATH = '')
+env.AppendUnique(LIBS = [
+    'coap', 'connectivity_abstraction', 'oc_logger', 'octbstack', 'oc'
+])
+env.AppendUnique(LIBS = ['pthread'])
+
+def make_cpp_program(name):
+    # build and install the C++ program
+    executable = env.Program(name, name + '.cpp')
+    env.Install(INSTALL_EXE_DIR, executable)
+
+targets = [
+    'simpleserver',
+    'simpleclient',
+    'simpleclientserver',
+    'directpairingclient',
+    'devicediscoveryserver',
+    'devicediscoveryclient',
+    'simpleserverHQ',
+    'simpleclientHQ',
+    'fridgeserver',
+    'fridgeclient',
+    'presenceserver',
+    'presenceclient',
+    'roomserver',
+    'roomclient',
+    'garageserver',
+    'garageclient',
+    'groupserver',
+    'groupclient',
+    'lightserver',
+    'threadingsample'
+]
+
+map(make_cpp_program, targets)
+env.Alias('install', INSTALL_EXE_DIR)
+

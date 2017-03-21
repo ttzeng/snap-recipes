@@ -19,6 +19,11 @@ apps:
       simpleclient
     plugs: [ network, network-bind ]
 
+slots:
+  resource:
+    interface: content
+    read: [ usr/local/iotivity ]
+
 parts:
   # Part builds from local source
   examples:

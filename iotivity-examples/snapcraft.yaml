@@ -1,0 +1,105 @@
+name: iotivity-examples
+version: 1.2.1
+summary: IoTivity examples
+description: |
+  This snap provides sample code of using IoTivity development package snap
+confinement: strict
+grade: devel
+
+apps:
+  simpleserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleserver
+  simpleclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleclient
+  simpleclientserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleclientserver
+  directpairingclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      directpairingclient
+  devicediscoveryserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      devicediscoveryserver
+  devicediscoveryclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      devicediscoveryclient
+  simpleserverHQ:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleserverHQ
+  simpleclientHQ:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleclientHQ
+  fridgeserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      fridgeserver
+  fridgeclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      fridgeclient
+  presenceserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      presenceserver
+  presenceclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      presenceclient
+  roomserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      roomserver
+  roomclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      roomclient
+  garageserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      garageserver
+  garageclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      garageclient
+  groupserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      groupserver
+  groupclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      groupclient
+  lightserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      lightserver
+  threadingsample:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      threadingsample
+
+plugs:
+  iotivity:
+    interface: content
+    content: export
+    target: usr/local/iotivity
+
+parts:
+  # Part builds from local source
+  examples:
+    plugin: scons
+    source: examples
+    install: |
+      # create interface mount point
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity
+
