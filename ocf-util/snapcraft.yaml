@@ -41,8 +41,8 @@ parts:
   meta-iot-web:
     plugin: nodejs
     node-packages:
-      # HEAD: package.json: package.json: publish new version (#53)
-      - 01org/iot-rest-api-server#3979442c554d4aa0a73dd642f8448aeb78ee86ec
+      # HEAD: oic: Add policy parameter 'p' (#55)
+      - 01org/iot-rest-api-server#ce21be84dc2d3a03fb99b0756141e29fcbbcb625
       # HEAD: AUTHORS.txt: Update authors
       - otcshare/iotivity-node#a4c1fd306851e854574f633f8298559bf510b7cd
       # Useful node modules
@@ -62,7 +62,7 @@ parts:
       # drop the iotivity-node associated with the iot-rest-api-server before staging
       rm -rf $SNAPCRAFT_PART_INSTALL/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node
     stage: [ $exports ]
-    snap:  [ $exports ]
+    prime:  [ $exports ]
 
   # Part installs Ubuntu packages
   ubuntu:
