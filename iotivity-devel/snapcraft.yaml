@@ -1,5 +1,5 @@
 name: iotivity-devel
-version: 1.2.1
+version: 1.3.0
 summary: IoTivity development package
 description:
   This snap provides supports for developing IoTivity native apps
@@ -11,13 +11,124 @@ apps:
     command: env \
       LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
       simpleserver
-    plugs: [ network-bind ]
 
   simpleclient:
     command: env \
       LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
       simpleclient
-    plugs: [ network, network-bind ]
+
+  simpleclientserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleclientserver
+
+  directpairingclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      directpairingclient
+
+  devicediscoveryserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      devicediscoveryserver
+
+  devicediscoveryclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      devicediscoveryclient
+
+  simpleserverHQ:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleserverHQ
+
+  simpleclientHQ:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      simpleclientHQ
+
+  fridgeserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      fridgeserver
+
+  fridgeclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      fridgeclient
+
+  presenceserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      presenceserver
+
+  presenceclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      presenceclient
+
+  roomserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      roomserver
+
+  roomclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      roomclient
+
+  garageserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      garageserver
+
+  garageclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      garageclient
+
+  groupserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      groupserver
+
+  groupclient:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      groupclient
+
+  lightserver:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      lightserver
+
+  threadingsample:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      threadingsample
+
+  sampleResourceServer:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      sampleResourceServer
+
+  separateResponseServer:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      separateResponseServer
+
+  nestedAttributesServer:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/usr/local/iotivity/lib:$LD_LIBRARY_PATH \
+      nestedAttributesServer
+
+plugs:
+  home:
+    interface: home
+  network:
+    interface: network
+  network-bind:
+    interface: network-bind
 
 slots:
   resource:
@@ -35,13 +146,14 @@ parts:
   iotivity:
     plugin: scons
     scons-options:
-      - SECURED=0  # Build with DTLS (0|1)
+      - SECURED=1  # Build with DTLS (0|1)
       - octbstack
     source: https://gerrit.iotivity.org/gerrit/p/iotivity.git
-    source-tag: 1.2.1
+    source-tag: 1.3.0
     prepare:
-      # pull the tinycbor code before building IoTivity
-      git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.4
+      # pull the tinycbor and mbedtls projects before building IoTivity
+      git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.4.1 |
+      git clone https://github.com/ARMmbed/mbedtls.git extlibs/mbedtls/mbedtls -b mbedtls-2.4.0
     install: |
       # stage IoTivity header files
       install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity
@@ -55,6 +167,13 @@ parts:
       # stage example code
       install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples/
       install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples resource/examples/*
+      # stage service header files & examples
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples/resource-encapsulation
+      cd service/resource-encapsulation/examples/linux
+      rsync -aLm --include='*' -f 'hide,! */' . $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/examples/resource-encapsulation
+      cd -
+      install -d $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/service/resource-encapsulation
+      install -t $SNAPCRAFT_PART_INSTALL/usr/local/iotivity/service/resource-encapsulation service/resource-encapsulation/include/*.h
     build-packages:
       # build prerequisties listed at
       # https://wiki.iotivity.org/build_iotivity_with_ubuntu_build_machine

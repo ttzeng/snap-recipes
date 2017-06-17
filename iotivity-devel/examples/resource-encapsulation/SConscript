@@ -1,0 +1,42 @@
+import os
+Import('env')
+
+rcs_env = env.Clone()
+
+IOTIVITY        = rcs_env.get('IOTIVITY')
+INSTALL_EXE_DIR = rcs_env.get('INSTALL_EXE_DIR')
+
+IOTIVITY_LIB = os.path.join(IOTIVITY, 'lib')
+RCS_EXAMPLES = os.path.join(IOTIVITY, 'examples', 'resource-encapsulation')
+
+rcs_env.VariantDir(os.getcwd(), RCS_EXAMPLES, duplicate = 0)
+
+rcs_env.AppendUnique(CPPPATH = [
+    os.path.join(IOTIVITY, 'service', 'resource-encapsulation'),
+])
+rcs_env.AppendUnique(LIBPATH = [IOTIVITY_LIB])
+rcs_env.AppendUnique(RPATH = '')
+rcs_env.AppendUnique(LIBS = 'rcs_common')
+
+# Client
+client_env = rcs_env.Clone()
+client_env.AppendUnique(LIBS = 'rcs_client')
+client_env.Program('sampleResourceClient', 'SampleResourceClient.cpp')
+client_env.Program('nestedAttributesClient', 'NestedAttributesClient.cpp')
+client_env.Install(INSTALL_EXE_DIR, source = [
+    'sampleResourceClient',
+    'nestedAttributesClient',
+])
+
+# Server
+server_env = rcs_env.Clone()
+server_env.AppendUnique(LIBS = 'rcs_server')
+server_env.Program('sampleResourceServer', 'SampleResourceServer.cpp')
+server_env.Program('separateResponseServer', 'SeparateResponseServer.cpp')
+server_env.Program('nestedAttributesServer', 'NestedAttributesServer.cpp')
+server_env.Install(INSTALL_EXE_DIR, source = [
+    'sampleResourceServer',
+    'separateResponseServer',
+    'nestedAttributesServer',
+])
+

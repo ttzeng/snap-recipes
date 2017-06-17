@@ -21,13 +21,17 @@ env.AppendUnique(CXXFLAGS = ['-std=c++0x', '-Wall'])
 env.AppendUnique(CPPPATH = [
 	os.path.join(IOTIVITY, 'include'),
 	os.path.join(IOTIVITY, 'c_common'),
+	os.path.join(IOTIVITY, 'c_common', 'oic_malloc', 'include'),
+	os.path.join(IOTIVITY, 'c_common', 'oic_string', 'include'),
+	os.path.join(IOTIVITY, 'csdk', 'include'),
 	os.path.join(IOTIVITY, 'csdk', 'stack', 'include'),
-	os.path.join(IOTIVITY, 'oc_logger', 'include')
+	os.path.join(IOTIVITY, 'csdk', 'logger', 'include'),
+	os.path.join(IOTIVITY, 'oc_logger', 'include'),
 ])
 env.AppendUnique(LIBPATH = [IOTIVITY_LIB])
 env.AppendUnique(RPATH   = '')
 env.AppendUnique(LIBS    = [
-	'coap', 'connectivity_abstraction', 'oc_logger', 'octbstack', 'oc'
+	'coap', 'connectivity_abstraction', 'oc_logger', 'octbstack', 'oc',
 ])
 env.AppendUnique(LIBS    = ['pthread'])
 
@@ -36,8 +40,36 @@ def make_cpp_program(name):
 	executable = env.Program(name, name + '.cpp')
 	env.Install(INSTALL_EXE_DIR, executable)
 
-targets = [ 'simpleserver', 'simpleclient' ]
+targets = [
+	'simpleserver',
+	'simpleclient',
+	'simpleclientserver',
+	'directpairingclient',
+	'devicediscoveryserver',
+	'devicediscoveryclient',
+	'simpleserverHQ',
+	'simpleclientHQ',
+	'fridgeserver',
+	'fridgeclient',
+	'presenceserver',
+	'presenceclient',
+	'roomserver',
+	'roomclient',
+	'garageserver',
+	'garageclient',
+	'groupserver',
+	'groupclient',
+	'lightserver',
+	'threadingsample',
+]
 
 map(make_cpp_program, targets)
 env.Alias('install', INSTALL_EXE_DIR)
+
+env.AppendUnique(IOTIVITY = IOTIVITY, INSTALL_EXE_DIR = INSTALL_EXE_DIR)
+Export('env')
+
+SConscript(dirs = [
+	'resource-encapsulation',
+])
 
