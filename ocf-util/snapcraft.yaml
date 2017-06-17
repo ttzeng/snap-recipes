@@ -1,5 +1,5 @@
 name: ocf-util
-version: 1.2.0-2
+version: 1.2.1-1
 summary: Utilities for testing OCF devices
 description:
   This snap installs iotivity-node and iot-rest-api-server node modules
@@ -41,10 +41,10 @@ parts:
   meta-iot-web:
     plugin: nodejs
     node-packages:
-      # HEAD: oic: Add policy parameter 'p' (#55)
-      - 01org/iot-rest-api-server#ce21be84dc2d3a03fb99b0756141e29fcbbcb625
-      # HEAD: AUTHORS.txt: Update authors
-      - otcshare/iotivity-node#a4c1fd306851e854574f633f8298559bf510b7cd
+      # HEAD: Merge pull request #65 from poussa/publish-0.4.1
+      - 01org/iot-rest-api-server#1bd160bfedd620dbd20bd1e1e8fc09eda21a413b
+      # HEAD: Build: Bump version
+      - otcshare/iotivity-node#63587a0d365fc66ec40dc6d4354329d0c1ff092f
       # Useful node modules
       - mraa
       - noble
