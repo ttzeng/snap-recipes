@@ -41,10 +41,10 @@ parts:
   meta-iot-web:
     plugin: nodejs
     node-packages:
-      # HEAD: Merge pull request #65 from poussa/publish-0.4.1
-      - 01org/iot-rest-api-server#1bd160bfedd620dbd20bd1e1e8fc09eda21a413b
-      # HEAD: Build: Bump version
-      - otcshare/iotivity-node#63587a0d365fc66ec40dc6d4354329d0c1ff092f
+      # HEAD: Merge pull request #67 from poussa/typo
+      - 01org/iot-rest-api-server#fa36a7d1eff7401d3c32d7b6391b1cac3234a628
+      # HEAD: Examples: Require only used parts of lodash in high level server
+      - otcshare/iotivity-node#55aad9883f14dccd9c6d84f65e7211f07a274edb
       # Useful node modules
       - mraa
       - noble
