@@ -1,5 +1,5 @@
 name: ocf-util
-version: 1.3.0-0
+version: 1.3.0-1
 summary: Utilities for testing OCF devices
 description:
   This snap installs iotivity-node and iot-rest-api-server node modules
@@ -43,8 +43,8 @@ parts:
     node-packages:
       # package.json: Update iotivity-node dependency and package version (#71)
       - 01org/iot-rest-api-server#b903fa79d81cc77e0b2424176c2c738f340d87f6
-      # SECURITY.md: Correct path to json2cbor
-      - otcshare/iotivity-node#f070902df26e233bc4d3214ca6c10a7d4b7ba8e1
+      # package.json: Bump version
+      - otcshare/iotivity-node#ce496720c1d954335e07072d3a4c3f3862f71708
       # Useful node modules
       - mraa
       - noble
