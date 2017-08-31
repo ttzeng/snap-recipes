@@ -43,8 +43,8 @@ parts:
     node-packages:
       # package.json: Update iotivity-node dependency and package version (#71)
       - 01org/iot-rest-api-server#b903fa79d81cc77e0b2424176c2c738f340d87f6
-      # package.json: Bump version
-      - otcshare/iotivity-node#ce496720c1d954335e07072d3a4c3f3862f71708
+      # AUTHORS.txt: Add Tonny Tzeng to authors
+      - otcshare/iotivity-node#c0e05a22725b9bd6ccc7de2c486cc52ac06e0c8f
       # Useful node modules
       - mraa
       - noble
