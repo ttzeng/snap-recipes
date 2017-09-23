@@ -10,16 +10,16 @@ grade: devel
 apps:
   start-iot-rest-api-server:
     command: env \
-      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node/iotivity-installed/lib:$LD_LIBRARY_PATH \
-      NODE_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules \
-      node $SNAP/lib/node_modules/iot-rest-api-server/index.js
+      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iotivity-node/iotivity-installed/lib:$LD_LIBRARY_PATH \
+      NODE_PATH=$SNAP/lib/node_modules \
+      node $SNAP/lib/node_modules/iot-rest-api-server/bin/iot-rest-api-server.js
     daemon: simple
     plugs: [ network-bind ]
 
   node:
     command: env \
-      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node/iotivity-installed/lib:$LD_LIBRARY_PATH \
-      NODE_PATH=$SNAP/lib/node_modules:$SNAP/lib/node_modules/iot-rest-api-server/node_modules \
+      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iotivity-node/iotivity-installed/lib:$LD_LIBRARY_PATH \
+      NODE_PATH=$SNAP/lib/node_modules \
       node
     plugs: [ hardware-observe, home, network-bind ]
 
@@ -32,19 +32,52 @@ apps:
     plugs: [ network-control ]
 
 parts:
-  # Part builds from local source
-  local:
-    plugin: nil
-    source: .
+  # Part installs staging patches
+  staging:
+    plugin: dump
+    source: src
+    organize:
+      staging/: usr/local/src/staging/
 
-  # Part installs iotivity, iotivity-node, iot-rest-api-server
-  meta-iot-web:
+  # Part installs iotivity-node
+  iotivity-node:
+    plugin: nil
+    source: https://github.com/otcshare/iotivity-node.git
+    source-commit: c0e05a22725b9bd6ccc7de2c486cc52ac06e0c8f
+    after: [ staging, nodejs ]
+    prepare: |
+      # install staging iotivity-node patches if any
+      install -t patches $SNAPCRAFT_STAGE/usr/local/src/staging/iotivity-node/*
+    build: |
+      # build the code with the npm installed by the 'nodejs' part
+      $SNAPCRAFT_STAGE/bin/npm install
+    install: |
+      # export the build tree under /lib/node_modules
+      install -d $SNAPCRAFT_PART_INSTALL/lib/node_modules/iotivity-node
+      rsync -aLm --include='*' -f 'hide,! */' . $SNAPCRAFT_PART_INSTALL/lib/node_modules/iotivity-node
+    stage:
+      - lib/node_modules/iotivity-node/
+    prime:
+      # exclude the native iotivity artifact
+      - -lib/node_modules/iotivity-node/iotivity-native
+
+  # Part imports iot-rest-api-server as a node module (source only)
+  iot-rest-api-server:
+    plugin: nil
+    source: https://github.com/01org/iot-rest-api-server.git
+    source-commit: e789b4c7eeeaacbab83b597b9200716f93aa0e35
+    after: [ iotivity-node ]
+    install: |
+      # export the source tree under /lib/node_modules
+      install -d $SNAPCRAFT_PART_INSTALL/lib/node_modules/iot-rest-api-server
+      rsync -aLm --include='*' -f 'hide,! */' . $SNAPCRAFT_PART_INSTALL/lib/node_modules/iot-rest-api-server
+    stage:
+      - lib/node_modules/iot-rest-api-server/
+
+  # Part installs Node.js and selected supporting modules
+  nodejs:
     plugin: nodejs
     node-packages:
-      # package.json: Update iotivity-node dependency and package version (#71)
-      - 01org/iot-rest-api-server#b903fa79d81cc77e0b2424176c2c738f340d87f6
-      # AUTHORS.txt: Add Tonny Tzeng to authors
-      - otcshare/iotivity-node#c0e05a22725b9bd6ccc7de2c486cc52ac06e0c8f
       # Useful node modules
       - mraa
       - noble
@@ -56,14 +89,7 @@ parts:
         - -CHANGELOG.md
         - -LICENSE
         - -README.md
-    organize:
-      # replace the iotivity-node with the specified snapshot
-      lib/node_modules/iotivity-node: lib/node_modules/iot-rest-api-server/node_modules/iotivity-node
-    install:
-      # drop the iotivity-node associated with the iot-rest-api-server before staging
-      rm -rf $SNAPCRAFT_PART_INSTALL/lib/node_modules/iot-rest-api-server/node_modules/iotivity-node
     stage: [ $exports ]
-    prime:  [ $exports ]
 
   # Part installs Ubuntu packages
   ubuntu:
