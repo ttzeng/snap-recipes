@@ -45,6 +45,7 @@ parts:
     source: https://github.com/otcshare/iotivity-node.git
     source-commit: c0e05a22725b9bd6ccc7de2c486cc52ac06e0c8f
     after: [ staging, nodejs ]
+    build-packages: [ build-essential, git, scons, libtool, autoconf, valgrind, doxygen, wget, unzip, libboost-dev, libboost-program-options-dev, libboost-thread-dev, uuid-dev, libexpat1-dev, libglib2.0-dev, libsqlite3-dev, libcurl4-gnutls-dev ]
     prepare: |
       # install staging iotivity-node patches if any
       install -t patches $SNAPCRAFT_STAGE/usr/local/src/staging/iotivity-node/*
