@@ -47,8 +47,8 @@ parts:
     after: [ staging, nodejs ]
     build-packages: [ build-essential, git, scons, libtool, autoconf, valgrind, doxygen, wget, unzip, libboost-dev, libboost-program-options-dev, libboost-thread-dev, uuid-dev, libexpat1-dev, libglib2.0-dev, libsqlite3-dev, libcurl4-gnutls-dev ]
     prepare: |
-      # install staging iotivity-node patches if any
-      install -t patches $SNAPCRAFT_STAGE/usr/local/src/staging/iotivity-node/*
+      # install iotivity staging patches if any
+      install -t patches $SNAPCRAFT_STAGE/usr/local/src/staging/iotivity/*
     build: |
       # build the code with the npm installed by the 'nodejs' part
       $SNAPCRAFT_STAGE/bin/npm install
