@@ -3,7 +3,8 @@ version: 1.3.0-1
 summary: Utilities for testing OCF devices
 description:
   This snap installs iotivity-node and iot-rest-api-server node modules
-  for testing OCF implementations using Javascript.
+  for testing OCF implementations using Javascript. Some iotivity utilities
+  are also included.
 confinement: strict
 grade: devel
 
@@ -23,6 +24,12 @@ apps:
       node
     plugs: [ hardware-observe, home, network-bind ]
 
+  json2cbor:
+    command: env \
+      LD_LIBRARY_PATH=$SNAP/lib/node_modules/iotivity-node/iotivity-installed/lib:$LD_LIBRARY_PATH \
+      json2cbor
+    plugs: [ home ]
+
   hciconfig:
     command: bin/hciconfig
     plugs: [ bluez, bluetooth-control ]
@@ -32,12 +39,13 @@ apps:
     plugs: [ network-control ]
 
 parts:
-  # Part installs staging patches
+  # Part installs staging patches, templates
   staging:
     plugin: dump
     source: src
     organize:
       staging/: usr/local/src/staging/
+      template/: usr/local/src/template/
 
   # Part installs iotivity-node
   iotivity-node:
@@ -56,7 +64,10 @@ parts:
       # export the build tree under /lib/node_modules
       install -d $SNAPCRAFT_PART_INSTALL/lib/node_modules/iotivity-node
       rsync -aLm --include='*' -f 'hide,! */' . $SNAPCRAFT_PART_INSTALL/lib/node_modules/iotivity-node
+    organize:
+      lib/node_modules/iotivity-node/iotivity-installed/bin/: bin/
     stage:
+      - bin/
       - lib/node_modules/iotivity-node/
     prime:
       # exclude the native iotivity artifact
