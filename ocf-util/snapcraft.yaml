@@ -20,7 +20,7 @@ apps:
   node:
     command: env \
       LD_LIBRARY_PATH=$SNAP/lib/node_modules/iotivity-node/iotivity-installed/lib:$LD_LIBRARY_PATH \
-      NODE_PATH=$SNAP/lib/node_modules \
+      NODE_PATH=$SNAP/lib/node_modules:$SNAP/lib/node_modules/iotivity-node/node_modules \
       node
     plugs: [ hardware-observe, home, network-bind ]
 
