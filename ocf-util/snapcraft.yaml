@@ -51,7 +51,7 @@ parts:
   iotivity-node:
     plugin: nil
     source: https://github.com/otcshare/iotivity-node.git
-    source-commit: c3ecd6e9b50bd4139d9178636df94525199ba24a
+    source-commit: 44f79441a4d1e44ebb546fca34246514c48a4156
     after: [ staging, nodejs ]
     build-packages: [ build-essential, git, scons, libtool, autoconf, valgrind, doxygen, wget, unzip, libboost-dev, libboost-program-options-dev, libboost-thread-dev, uuid-dev, libexpat1-dev, libglib2.0-dev, libsqlite3-dev, libcurl4-gnutls-dev ]
     prepare: |
