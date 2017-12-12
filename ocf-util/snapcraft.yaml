@@ -1,5 +1,5 @@
 name: ocf-util
-version: 1.3.0-2
+version: 1.3.0-3
 summary: Utilities for testing OCF devices
 description:
   This snap installs iotivity-node and iot-rest-api-server node modules
@@ -30,6 +30,10 @@ apps:
       json2cbor
     plugs: [ home ]
 
+  init-svr-db:
+    command: bin/init-svr-db.sh
+    plugs: [ home ]
+
   hciconfig:
     command: bin/hciconfig
     plugs: [ bluez, bluetooth-control ]
@@ -46,12 +50,13 @@ parts:
     organize:
       staging/: usr/local/src/staging/
       template/: usr/local/src/template/
+      scripts/: bin/
 
   # Part installs iotivity-node
   iotivity-node:
     plugin: nil
     source: https://github.com/otcshare/iotivity-node.git
-    source-commit: 44f79441a4d1e44ebb546fca34246514c48a4156
+    source-commit: f4a83a1ac18bc688aaa085e6dde7da797047f365
     after: [ staging, nodejs ]
     build-packages: [ build-essential, git, scons, libtool, autoconf, valgrind, doxygen, wget, unzip, libboost-dev, libboost-program-options-dev, libboost-thread-dev, uuid-dev, libexpat1-dev, libglib2.0-dev, libsqlite3-dev, libcurl4-gnutls-dev ]
     prepare: |
@@ -89,6 +94,7 @@ parts:
   # Part installs Node.js and selected supporting modules
   nodejs:
     plugin: nodejs
+    node-engine: 4.6.2
     node-packages:
       # Useful node modules
       - mraa
